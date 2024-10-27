@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Expense Tracker</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Bütçe Uygulaması</h1>
+      <div class="input-container">
+        <input
+          class="input-name"
+          type="text"
+          name="input-name"
+          placeholder="lütfen bir başlık girin."
+        />
+        <input
+          class="input-numeric"
+          type="text"
+          name="input-numeric"
+          placeholder="lütfen başlığa ait olan fiyatı girin."
+        />
+        <select class="entry-toggle" name="entry-toggle">
+          <option value="income">Gelir</option>
+          <option selected value="outcome">Gider</option>
+        </select>
+      </div>
+      <button class="examine-toggle">Yan yana incele</button>
+      <div class="add-datepick-container">
+        <label for="month">Aya göre filtreleyin &nbsp;</label>
+        <select id="month">
+          <option selected value="13">Hepsi</option>
+          <option value="01">Ocak</option>
+          <option value="02">Şubat</option>
+          <option value="03">Mart</option>
+          <option value="04">Nisan</option>
+          <option value="05">Mayıs</option>
+          <option value="06">Haziran</option>
+          <option value="07">Temmuz</option>
+          <option value="08">Ağustos</option>
+          <option value="09">Eylül</option>
+          <option value="10">Ekim</option>
+          <option value="11">Kasım</option>
+          <option value="12">Aralık</option>
+        </select>
+        <button class="add-item">Ekle</button>
+      </div>
+
+      <div class="item-container">
+        <ul class="income-list"></ul>
+        <ul class="expense-list"></ul>
+        <div class="expense-price-sum">
+          <p class="expense-price-sum-desc">
+            Harcamaların toplamı <span class="expense-sum">400 </span> TL olarak
+            belirlenmiştir.
+          </p>
+        </div>
+        <div class="income-price-sum">
+          <p class="income-price-sum-desc">
+            Gelirlerin Toplam <span class="income-sum">400 </span> TL olarak
+            belirlenmiştir.
+          </p>
+        </div>
+        <div class="calc-sum-container">
+          <p class="calc-sum-desc">
+            Kalan miktar: <span class="calc-sum"> 400 </span> TL
+          </p>
+        </div>
+        <div class="calc-sum-month">
+          <p class="calc-sum-month"><span class="calc-month"> 0 </span> TL</p>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
