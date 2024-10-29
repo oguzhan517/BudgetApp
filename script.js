@@ -15,8 +15,9 @@ let calcSum = document.querySelector(".calc-sum");
 let examineToggle = document.querySelector(".examine-toggle");
 let container = document.querySelector(".container");
 document.querySelector(".calc-sum-month").style.visibility = "hidden";
+let itemMonth = document.querySelector("#month");
 let allElements = Array.from(document.querySelectorAll("li"));
-monthpick = document.querySelector("#month");
+let monthpick = document.querySelector("#month-filter");
 const dates = document.querySelectorAll(".date");
 let totalExpenseMonth = 0;
 let totalIncomeMonth = 0;
@@ -41,9 +42,8 @@ window.addEventListener("load", (event) => {
       JSON.parse(localStorage.getItem("incomeArray"))) ||
     [];
   incomeArray.forEach((incomeItem) => {
-    let itemDate = moment(incomeItem.currentDate).format("DD/MM/YYYY");
     let htmlItem = `<li class="income-item-${incomeItem.id}"><h2 class="expense-item-header">${incomeItem.incomeName}</h2><div><p class="item-price"><span class="income-item-price">${incomeItem.incomePrice}</span> TL</p>
-  <div class="date">${itemDate}</div><button class="delete-button">X</button></div></li>`;
+  <div class="date">${incomeItem.itemDate}</div><button class="delete-button">X</button></div></li>`;
     incomeList.insertAdjacentHTML("beforeend", htmlItem);
     incomeTotal += parseFloat(incomeItem.incomePrice);
   });
@@ -52,9 +52,9 @@ window.addEventListener("load", (event) => {
       JSON.parse(localStorage.getItem("expenseArray"))) ||
     [];
   expenseArray.forEach((expenseItem) => {
-    let itemDate = moment(expenseItem.currentDate).format("DD/MM/YYYY");
+    let currentYear = moment().year();
     let htmlItem = `<li class="income-item-${expenseItem.id}"><h2 class="expense-item-header">${expenseItem.expenseName}</h2><div><p class="item-price"><span class="income-item-price">${expenseItem.expensePrice}</span> TL</p>
-  <div class="date">${itemDate}</div><button class="delete-button">X</button></div></li>`;
+  <div class="date">${expenseItem.itemDate}</div><button class="delete-button">X</button></div></li>`;
     expenseList.insertAdjacentHTML("beforeend", htmlItem);
     expenseTotal += parseFloat(expenseItem.expensePrice);
   });
@@ -63,6 +63,7 @@ window.addEventListener("load", (event) => {
   calcSum.textContent = incomeTotal - expenseTotal;
 });
 
+// month pick event functionality
 monthpick.addEventListener("change", function (e) {
   allElements = Array.from(document.querySelectorAll("li"));
   totalExpenseMonth = 0;
@@ -77,7 +78,7 @@ monthpick.addEventListener("change", function (e) {
     let filteredElements = allElements.filter((element) => {
       return moment(
         element.children[1].children[1].textContent,
-        "DD/MM/YYYY"
+        "MM/YYYY"
       ).isBetween(startDate, endDate, undefined, []);
     });
     allElements.forEach((element) => (element.style.visibility = "hidden"));
@@ -129,8 +130,12 @@ document.querySelector(".income-sum").textContent = incomeTotal;
 addButton.addEventListener("click", function () {
   // add button for income values
   if (entryToggle.value == "income") {
-    const currentDate = moment();
-    const dateIncome = currentDate.format("DD/MM/YYYY");
+    let itemMonthValue = itemMonth.value;
+    let currentYear = moment().year();
+    let itemD = moment()
+      .year(currentYear)
+      .month(itemMonthValue - 1);
+    let itemDate = itemD.format("MM/YYYY");
     let incomeListLength = incomeList.getElementsByTagName("li").length;
     let incomeName = document.querySelector(".input-name").value;
     let incomePrice = document.querySelector(".input-numeric").value;
@@ -138,12 +143,12 @@ addButton.addEventListener("click", function () {
       id: incomeListLength + 1,
       incomeName,
       incomePrice,
-      currentDate,
+      itemDate,
     };
     let incomeArray = [];
     incomeArray.push(incomeItem);
     localStorage.setItem("incomeArray", JSON.stringify(incomeArray));
-    if (currentDate.format("MM") == monthpick.value) {
+    if (itemD.format("MM") == monthpick.value) {
       totalIncomeMonth += parseFloat(incomePrice);
     }
     document.querySelector(
@@ -156,23 +161,27 @@ addButton.addEventListener("click", function () {
     let htmlItem = `<li class="income-item-${
       incomeListLength + 1
     }"><h2 class="expense-item-header">${incomeName}</h2><div><p class="item-price"><span class="income-item-price">${incomePrice}</span> TL</p>
-  <div class="date">${dateIncome}</div><button class="delete-button">X</button></div></li>`;
+  <div class="date">${itemDate}</div><button class="delete-button">X</button></div></li>`;
     incomeList.insertAdjacentHTML("beforeend", htmlItem);
     // add button for expense values
   } else {
-    const currentDate = moment();
-    const dateExpense = currentDate.format("DD/MM/YYYY");
+    let itemMonthValue = itemMonth.value;
+    const currentYear = moment().year();
+    let itemD = moment()
+      .year(currentYear)
+      .month(itemMonthValue - 1);
+    let itemDate = itemD.format("MM/YYYY");
     let expenseListLength = expenseList.getElementsByTagName("li").length;
     let expenseName = document.querySelector(".input-name").value;
     let expensePrice = document.querySelector(".input-numeric").value;
-    if (currentDate.format("MM") == monthpick.value) {
+    if (itemD.format("MM") == monthpick.value) {
       totalExpenseMonth += parseFloat(expensePrice);
     }
     let expenseItem = {
       id: expenseListLength + 1,
       expenseName,
       expensePrice,
-      currentDate,
+      itemDate,
     };
     let expenseArray = [];
     expenseArray.push(expenseItem);
@@ -186,7 +195,7 @@ addButton.addEventListener("click", function () {
     document.querySelector(".expense-sum").textContent = expenseTotal;
     let htmlItem = `<li class="expense-item-${
       expenseListLength + 1
-    }"><h2 class="expense-item-header">${expenseName}</h2><div><p class="item-price"><span class="expense-item-price">${expensePrice}</span> TL</p><div class="date">${dateExpense}</div><button class="delete-button">X</button></div></li>`;
+    }"><h2 class="expense-item-header">${expenseName}</h2><div><p class="item-price"><span class="expense-item-price">${expensePrice}</span> TL</p><div class="date">${itemDate}</div><button class="delete-button">X</button></div></li>`;
     expenseList.insertAdjacentHTML("beforeend", htmlItem);
   }
   // final calculation after adding some data
@@ -274,5 +283,3 @@ examineToggle.addEventListener("click", function () {
     incomeList.style.width = "500px";
   }
 });
-
-// month pick event functionality
