@@ -21,6 +21,13 @@ let monthpick = document.querySelector("#month-filter");
 const dates = document.querySelectorAll(".date");
 let totalExpenseMonth = 0;
 let totalIncomeMonth = 0;
+let incomeArray = localStorage.getItem("incomeArray")
+  ? JSON.parse(localStorage.getItem("incomeArray"))
+  : [];
+let expenseArray = localStorage.getItem("expenseArray")
+  ? JSON.parse(localStorage.getItem("expenseArray"))
+  : [];
+
 // toggle between income and expense
 entryToggle.addEventListener("change", function (e) {
   if (examineToggle.textContent == "Yan yana incele") {
@@ -37,20 +44,12 @@ entryToggle.addEventListener("change", function (e) {
 // page load functionality
 
 window.addEventListener("load", (event) => {
-  let incomeArray =
-    (localStorage.getItem("incomeArray") &&
-      JSON.parse(localStorage.getItem("incomeArray"))) ||
-    [];
   incomeArray.forEach((incomeItem) => {
     let htmlItem = `<li class="income-item-${incomeItem.id}"><h2 class="expense-item-header">${incomeItem.incomeName}</h2><div><p class="item-price"><span class="income-item-price">${incomeItem.incomePrice}</span> TL</p>
   <div class="date">${incomeItem.itemDate}</div><button class="delete-button">X</button></div></li>`;
     incomeList.insertAdjacentHTML("beforeend", htmlItem);
     incomeTotal += parseFloat(incomeItem.incomePrice);
   });
-  let expenseArray =
-    (localStorage.getItem("expenseArray") &&
-      JSON.parse(localStorage.getItem("expenseArray"))) ||
-    [];
   expenseArray.forEach((expenseItem) => {
     let currentYear = moment().year();
     let htmlItem = `<li class="income-item-${expenseItem.id}"><h2 class="expense-item-header">${expenseItem.expenseName}</h2><div><p class="item-price"><span class="income-item-price">${expenseItem.expensePrice}</span> TL</p>
@@ -132,9 +131,7 @@ addButton.addEventListener("click", function () {
   if (entryToggle.value == "income") {
     let itemMonthValue = itemMonth.value;
     let currentYear = moment().year();
-    let itemD = moment()
-      .year(currentYear)
-      .month(itemMonthValue - 1);
+    let itemD = moment(`${itemMonthValue}/2024`, "MM/YYYY");
     let itemDate = itemD.format("MM/YYYY");
     let incomeListLength = incomeList.getElementsByTagName("li").length;
     let incomeName = document.querySelector(".input-name").value;
@@ -145,7 +142,6 @@ addButton.addEventListener("click", function () {
       incomePrice,
       itemDate,
     };
-    let incomeArray = [];
     incomeArray.push(incomeItem);
     localStorage.setItem("incomeArray", JSON.stringify(incomeArray));
     if (itemD.format("MM") == monthpick.value) {
@@ -167,9 +163,7 @@ addButton.addEventListener("click", function () {
   } else {
     let itemMonthValue = itemMonth.value;
     const currentYear = moment().year();
-    let itemD = moment()
-      .year(currentYear)
-      .month(itemMonthValue - 1);
+    let itemD = moment(`${itemMonthValue}/2024`, "MM/YYYY");
     let itemDate = itemD.format("MM/YYYY");
     let expenseListLength = expenseList.getElementsByTagName("li").length;
     let expenseName = document.querySelector(".input-name").value;
@@ -218,7 +212,7 @@ container.addEventListener("click", function (e) {
       let newIncomeArray = incomeArray.filter((item) => {
         return item.id != e.target.parentNode.parentNode.className.slice(-1);
       });
-      localStorage.setItem("incomeArray", newIncomeArray);
+      localStorage.setItem("incomeArray", JSON.stringify(newIncomeArray));
       if (monthpick.value !== "13") {
         totalIncomeMonth -= parseFloat(
           e.target.previousElementSibling.previousElementSibling.children[0]
@@ -240,7 +234,7 @@ container.addEventListener("click", function (e) {
       let newExpenseArray = expenseArray.filter((item) => {
         return item.id != e.target.parentNode.parentNode.className.slice(-1);
       });
-      localStorage.setItem("expenseArray", newExpenseArray);
+      localStorage.setItem("expenseArray", JSON.stringify(newExpenseArray));
       if (monthpick.value !== "13") {
         totalExpenseMonth -= parseFloat(
           e.target.previousElementSibling.previousElementSibling.children[0]
