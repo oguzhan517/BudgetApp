@@ -177,7 +177,6 @@ addButton.addEventListener("click", function () {
       expensePrice,
       itemDate,
     };
-    let expenseArray = [];
     expenseArray.push(expenseItem);
     localStorage.setItem("expenseArray", JSON.stringify(expenseArray));
     document.querySelector(
