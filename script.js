@@ -125,8 +125,14 @@ calcSum.textContent = incomeTotal - expenseTotal;
 document.querySelector(".expense-sum").textContent = expenseTotal;
 document.querySelector(".income-sum").textContent = incomeTotal;
 
+// generate unique id func
+function generateUniqueId() {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+}
+
 // Add Button Functionality
 addButton.addEventListener("click", function () {
+  const uniqueId = generateUniqueId();
   // add button for income values
   if (entryToggle.value == "income") {
     let itemMonthValue = itemMonth.value;
@@ -137,7 +143,7 @@ addButton.addEventListener("click", function () {
     let incomeName = document.querySelector(".input-name").value;
     let incomePrice = document.querySelector(".input-numeric").value;
     let incomeItem = {
-      id: incomeListLength + 1,
+      id: uniqueId,
       incomeName,
       incomePrice,
       itemDate,
@@ -154,9 +160,7 @@ addButton.addEventListener("click", function () {
     }`;
     incomeTotal += parseFloat(incomePrice);
     document.querySelector(".income-sum").textContent = incomeTotal;
-    let htmlItem = `<li class="income-item-${
-      incomeListLength + 1
-    }"><h2 class="expense-item-header">${incomeName}</h2><div><p class="item-price"><span class="income-item-price">${incomePrice}</span> TL</p>
+    let htmlItem = `<li class="income-item-${uniqueId}"><h2 class="expense-item-header">${incomeName}</h2><div><p class="item-price"><span class="income-item-price">${incomePrice}</span> TL</p>
   <div class="date">${itemDate}</div><button class="delete-button">X</button></div></li>`;
     incomeList.insertAdjacentHTML("beforeend", htmlItem);
     // add button for expense values
@@ -172,7 +176,7 @@ addButton.addEventListener("click", function () {
       totalExpenseMonth += parseFloat(expensePrice);
     }
     let expenseItem = {
-      id: expenseListLength + 1,
+      id: uniqueId,
       expenseName,
       expensePrice,
       itemDate,
@@ -186,9 +190,7 @@ addButton.addEventListener("click", function () {
     }`;
     expenseTotal += parseFloat(expensePrice);
     document.querySelector(".expense-sum").textContent = expenseTotal;
-    let htmlItem = `<li class="expense-item-${
-      expenseListLength + 1
-    }"><h2 class="expense-item-header">${expenseName}</h2><div><p class="item-price"><span class="expense-item-price">${expensePrice}</span> TL</p><div class="date">${itemDate}</div><button class="delete-button">X</button></div></li>`;
+    let htmlItem = `<li class="expense-item-${uniqueId}"><h2 class="expense-item-header">${expenseName}</h2><div><p class="item-price"><span class="expense-item-price">${expensePrice}</span> TL</p><div class="date">${itemDate}</div><button class="delete-button">X</button></div></li>`;
     expenseList.insertAdjacentHTML("beforeend", htmlItem);
   }
   // final calculation after adding some data
@@ -209,7 +211,9 @@ container.addEventListener("click", function (e) {
       );
       let incomeArray = JSON.parse(localStorage.getItem("incomeArray"));
       let newIncomeArray = incomeArray.filter((item) => {
-        return item.id != e.target.parentNode.parentNode.className.slice(-1);
+        return (
+          item.id != e.target.parentNode.parentNode.className.split("-").at(-1)
+        );
       });
       localStorage.setItem("incomeArray", JSON.stringify(newIncomeArray));
       if (monthpick.value !== "13") {
@@ -231,7 +235,9 @@ container.addEventListener("click", function (e) {
       );
       let expenseArray = JSON.parse(localStorage.getItem("expenseArray"));
       let newExpenseArray = expenseArray.filter((item) => {
-        return item.id != e.target.parentNode.parentNode.className.slice(-1);
+        return (
+          item.id != e.target.parentNode.parentNode.className.split("-").at(-1)
+        );
       });
       localStorage.setItem("expenseArray", JSON.stringify(newExpenseArray));
       if (monthpick.value !== "13") {
